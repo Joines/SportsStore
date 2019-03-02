@@ -20,12 +20,13 @@ namespace SportsStore.WebUI.Controllers
         }
 
         // GET: Product
-        public ViewResult List(int page = 1)
+        public ViewResult List(string category, int page = 1)
         {
             ProductsListViewModel model = new ProductsListViewModel
             {
                 Products = repository.Products
-                .OrderBy(o => o.ProductID)
+                .Where( p => category == null || p.Category == category)
+                .OrderBy(o => o.ProductID)                                                  
                 .Skip((page - 1) * PageSize)
                 .Take(PageSize),
                 PagingInfo = new PagingInfo
@@ -33,7 +34,8 @@ namespace SportsStore.WebUI.Controllers
                     CurrentPage = page,
                     ItemsPerPage = PageSize,
                     TotalItems = repository.Products.Count()
-                }
+                },
+                CurrentCategory = category
             };
 
             return View(model);
